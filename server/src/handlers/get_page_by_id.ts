@@ -1,9 +1,22 @@
+import { db } from '../db';
+import { pagesTable } from '../db/schema';
 import { type GetPageByIdInput, type Page } from '../schema';
+import { eq } from 'drizzle-orm';
 
-export async function getPageById(input: GetPageByIdInput): Promise<Page | null> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching a single page by its ID from the database.
-    // It should return null if no page is found with the given ID.
-    // This is primarily used for admin/management operations.
-    return null;
-}
+export const getPageById = async (input: GetPageByIdInput): Promise<Page | null> => {
+  try {
+    const result = await db.select()
+      .from(pagesTable)
+      .where(eq(pagesTable.id, input.id))
+      .execute();
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error('Failed to get page by ID:', error);
+    throw error;
+  }
+};

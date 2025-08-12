@@ -1,16 +1,33 @@
+import { db } from '../db';
+import { navigationItemsTable } from '../db/schema';
 import { type NavigationItem } from '../schema';
+import { asc, eq } from 'drizzle-orm';
 
 export async function getNavigationItems(): Promise<NavigationItem[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all navigation items from the database.
-    // Items should be ordered by order_index for consistent menu display.
-    return [];
+  try {
+    const results = await db.select()
+      .from(navigationItemsTable)
+      .orderBy(asc(navigationItemsTable.order_index))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch navigation items:', error);
+    throw error;
+  }
 }
 
 export async function getVisibleNavigationItems(): Promise<NavigationItem[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching only visible navigation items from the database.
-    // This is used for rendering the public navigation menu.
-    // Items should be ordered by order_index.
-    return [];
+  try {
+    const results = await db.select()
+      .from(navigationItemsTable)
+      .where(eq(navigationItemsTable.is_visible, true))
+      .orderBy(asc(navigationItemsTable.order_index))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch visible navigation items:', error);
+    throw error;
+  }
 }

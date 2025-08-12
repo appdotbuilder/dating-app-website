@@ -1,9 +1,20 @@
+import { db } from '../db';
+import { pagesTable } from '../db/schema';
+import { eq } from 'drizzle-orm';
 import { type GetPageByIdInput } from '../schema';
 
 export async function deletePage(input: GetPageByIdInput): Promise<boolean> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is deleting a page from the database.
-    // It should return true if the page was successfully deleted, false if not found.
-    // Consider soft delete vs hard delete based on business requirements.
-    return false;
+  try {
+    // Perform hard delete - remove the page from database
+    const result = await db.delete(pagesTable)
+      .where(eq(pagesTable.id, input.id))
+      .execute();
+
+    // Check if any rows were affected (deleted)
+    // result.rowCount will be 1 if page was found and deleted, 0 if not found, or null in some cases
+    return (result.rowCount ?? 0) > 0;
+  } catch (error) {
+    console.error('Page deletion failed:', error);
+    throw error;
+  }
 }
