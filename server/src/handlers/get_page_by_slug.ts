@@ -1,24 +1,18 @@
 import { db } from '../db';
 import { pagesTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
-import { type GetPageBySlugInput, type Page } from '../schema';
+import type { GetPageBySlugInput, Page } from '../schema';
 
-export async function getPageBySlug(input: GetPageBySlugInput): Promise<Page | null> {
+export const getPageBySlug = async (input: GetPageBySlugInput): Promise<Page | null> => {
   try {
-    const result = await db.select()
+    const results = await db.select()
       .from(pagesTable)
       .where(eq(pagesTable.slug, input.slug))
-      .limit(1)
       .execute();
 
-    if (result.length === 0) {
-      return null;
-    }
-
-    // Return the first (and should be only) result
-    return result[0];
+    return results.length > 0 ? results[0] : null;
   } catch (error) {
-    console.error('Get page by slug failed:', error);
+    console.error('Failed to get page by slug:', error);
     throw error;
   }
-}
+};

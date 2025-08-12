@@ -1,10 +1,9 @@
 import { db } from '../db';
 import { pagesTable } from '../db/schema';
-import { type CreatePageInput, type Page } from '../schema';
+import type { CreatePageInput, Page } from '../schema';
 
 export const createPage = async (input: CreatePageInput): Promise<Page> => {
   try {
-    // Insert page record
     const result = await db.insert(pagesTable)
       .values({
         slug: input.slug,
@@ -17,9 +16,7 @@ export const createPage = async (input: CreatePageInput): Promise<Page> => {
       .returning()
       .execute();
 
-    // Return the created page
-    const page = result[0];
-    return page;
+    return result[0];
   } catch (error) {
     console.error('Page creation failed:', error);
     throw error;

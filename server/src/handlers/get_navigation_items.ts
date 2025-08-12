@@ -1,9 +1,9 @@
 import { db } from '../db';
 import { navigationItemsTable } from '../db/schema';
-import { type NavigationItem } from '../schema';
 import { asc, eq } from 'drizzle-orm';
+import type { NavigationItem } from '../schema';
 
-export async function getNavigationItems(): Promise<NavigationItem[]> {
+export const getNavigationItems = async (): Promise<NavigationItem[]> => {
   try {
     const results = await db.select()
       .from(navigationItemsTable)
@@ -12,12 +12,12 @@ export async function getNavigationItems(): Promise<NavigationItem[]> {
 
     return results;
   } catch (error) {
-    console.error('Failed to fetch navigation items:', error);
+    console.error('Failed to get navigation items:', error);
     throw error;
   }
-}
+};
 
-export async function getVisibleNavigationItems(): Promise<NavigationItem[]> {
+export const getVisibleNavigationItems = async (): Promise<NavigationItem[]> => {
   try {
     const results = await db.select()
       .from(navigationItemsTable)
@@ -27,7 +27,7 @@ export async function getVisibleNavigationItems(): Promise<NavigationItem[]> {
 
     return results;
   } catch (error) {
-    console.error('Failed to fetch visible navigation items:', error);
+    console.error('Failed to get visible navigation items:', error);
     throw error;
   }
-}
+};

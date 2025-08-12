@@ -25,6 +25,7 @@ import { createNavigationItem } from './handlers/create_navigation_item';
 import { getNavigationItems, getVisibleNavigationItems } from './handlers/get_navigation_items';
 import { updateNavigationItem } from './handlers/update_navigation_item';
 import { deleteNavigationItem } from './handlers/delete_navigation_item';
+import { initializeData } from './handlers/initialize_data';
 
 const t = initTRPC.create({
   transformer: superjson,
@@ -83,11 +84,22 @@ const appRouter = router({
   deleteNavigationItem: publicProcedure
     .input(getPageByIdInputSchema)
     .mutation(({ input }) => deleteNavigationItem(input)),
+
+  // Initialize data
+  initializeData: publicProcedure
+    .mutation(() => initializeData()),
 });
 
 export type AppRouter = typeof appRouter;
 
 async function start() {
+  // Initialize database with seed data on startup
+  try {
+    await initializeData();
+  } catch (error) {
+    console.error('Failed to initialize data:', error);
+  }
+
   const port = process.env['SERVER_PORT'] || 2022;
   const server = createHTTPServer({
     middleware: (req, res, next) => {
